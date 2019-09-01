@@ -1,7 +1,9 @@
 # Python Craigslist Scraper
 ## Description
 ```
-Scrape Craigslist for market data for rental properties and saves it to a database file. Organizes JSON data to a list and inserts it into a database file. Functions to convert data to a dictionary and save into CSV file available.
+Scrape Craigslist for market data for rental properties and saves it to a database file.
+Organizes JSON data to a list and inserts it into a database file.
+Functions to convert data to a dictionary and save into CSV file available.
 ```
 ## Data Collected
 ```
