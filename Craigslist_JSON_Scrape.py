@@ -9,32 +9,33 @@ BASE_URL1 = "https://newhaven.craigslist.org"
 
 # Scrapes website
 def scrape_apts():
+    t0 = time.time() # Colect start time
     apt_data =[]
     count = 0
     URL = f"https://newhaven.craigslist.org/jsonsearch/apa/?search_distance=8&availabilityMode=0&sale_date=all+dates&map=1"
     apts = requests.get(f"{URL}").json()[0]
-    sleep(1)
     for apt in apts:
-        if "GeoCluster" in apt:
+        if "GeoCluster" in apt: # Checks for subpages
             url1 = apt["url"]
+            sleep(.25)  # Waits before calling request again
             geo_apts = requests.get(f"{BASE_URL1}{url1}").json()[0]
-            sleep(.25)
             for geo_apt in geo_apts:
                 data = (get_posting_id(geo_apt), get_title(geo_apt), get_bedrooms(geo_apt), get_price(
                     geo_apt), get_posted_date(geo_apt), get_latitude(geo_apt), get_longitude(geo_apt), get_url(geo_apt))
                 apt_data.append(data)
                 count += 1
-                print(count)
+                print(f"{count} apartments colected")
         else:
             data = (get_posting_id(apt), get_title(apt), get_bedrooms(apt), get_price(
                 apt), get_posted_date(apt), get_latitude(apt), get_longitude(apt), get_url(apt))
             apt_data.append(data)
             count +=1
-            print(count)
-    print(f"{count} New Haven apartment data collected.")
+            print(f"{count} apartments colected")
+    t = time.time() # Collects end time
+    print(f"{count} New Haven apartment data collected in {round((t-t0), 2)} seconds.")
     return save_apts(apt_data)
 
-
+# Collects data into a dictionary
 def append_data(apt):
     data = []
     data.append({
@@ -48,9 +49,11 @@ def append_data(apt):
         "URL": get_url(apt)
     })
     return data
+
 # Creates apts.db -> creates apts table -> inserts values ; if table is already created comment out CREATE TABLE
 def save_apts(all_apts):
-    connection = sqlite3.connect("NewHaven_8_Miles.db")
+    file_name = "NewHaven_8_Miles.db"
+    connection = sqlite3.connect(file_name)
     c = connection.cursor()
     #Table already created
     #c.execute(''' CREATE TABLE apts
@@ -58,7 +61,9 @@ def save_apts(all_apts):
     c.executemany("INSERT INTO apts VALUES (?,?,?,?,?,?,?,?)", all_apts)
     connection.commit()
     connection.close()
+    return print(f"Apartments added to {file_name}.")
 
+# creates CSV file (DATA MUST BE IN DICTIONARY TO USE)
 def write_apts(apt_data):
     file_name = "New_Haven_Craig_8MI"
     with open(f"{file_name}.csv", "a", encoding='utf-8') as file:
