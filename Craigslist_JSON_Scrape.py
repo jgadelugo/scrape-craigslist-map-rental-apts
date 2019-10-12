@@ -1,7 +1,6 @@
 import requests
 import sqlite3
 from csv import DictWriter
-from time import sleep
 import json
 import time
 
@@ -23,7 +22,7 @@ def scrape_apts():
     for apt in apts:
         if "GeoCluster" in apt: # Checks for subpages
             url1 = apt["url"]
-            sleep(.25)  # Waits before calling request again
+            time.sleep(.25)  # Waits before calling request again
             geo_apts = requests.get(f"{BASE_URL1}{url1}").json()[0]
             for geo_apt in geo_apts:
                 data = (get_posting_id(geo_apt), get_title(geo_apt), get_bedrooms(geo_apt), get_price(
