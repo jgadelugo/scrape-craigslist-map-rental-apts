@@ -7,9 +7,15 @@ import time
 
 BASE_URL1 = "https://newhaven.craigslist.org"
 
+def main():
+    t0 = time.time() # Colect start time
+    scrape_apts()
+    t = time.time() # End time
+    totalTime = round(t - t0, 2)
+    print(f"Application took {totalTime} seconds to run.")
+
 # Scrapes website
 def scrape_apts():
-    t0 = time.time() # Colect start time
     apt_data =[]
     count = 0
     URL = f"https://newhaven.craigslist.org/jsonsearch/apa/?search_distance=8&availabilityMode=0&sale_date=all+dates&map=1"
@@ -31,8 +37,7 @@ def scrape_apts():
             apt_data.append(data)
             count +=1
             print(f"{count} apartments colected")
-    t = time.time() # Collects end time
-    print(f"{count} New Haven apartment data collected in {round((t-t0), 2)} seconds.")
+    print(f"{count} New Haven apartment data collected.")
     return save_apts(apt_data)
 
 # Collects data into a dictionary
@@ -110,14 +115,12 @@ def get_title(apt):
         return "None"
     return title
 
-
 def get_posted_date(apt):
     try:
         PostedDate = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(apt["PostedDate"])))
     except:
         return "None"
     return PostedDate
-
 
 def get_posting_id(apt):
     try:
@@ -126,7 +129,6 @@ def get_posting_id(apt):
         return "None"
     return PostingID
 
-
 def get_url(apt):
     try:
         apt_url = apt["PostingURL"]
@@ -134,5 +136,4 @@ def get_url(apt):
         return "None"
     return apt_url
 
-
-scrape_apts()
+main()
